@@ -1,0 +1,15 @@
+* {
+    font-size: 20px;
+}
+
+.divider:after,
+.divider:before {
+  content: "";
+  flex: 1;
+  height: 1px;
+  background: #eee;
+}
+
+.strikethrough {
+    text-decoration: line-through;
+}

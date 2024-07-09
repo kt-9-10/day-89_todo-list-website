@@ -1,0 +1,101 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Todo List Web</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-9ndCyUaIbzAi2FUVXJi0CjmCapSmO7SnpJef0486qhLnuZ2cdeRhO02iuK6FUUVM" crossorigin="anonymous">
+    <link
+            href="{{ url_for('static', filename='css/styles.css') }}"
+            rel="stylesheet"
+    />
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            $('input[type="checkbox"]').change(function() {
+                let checkboxId = $(this).attr('id');
+                let isChecked = $(this).is(':checked');
+                $.ajax({
+                    url: '/update_checkbox',
+                    method: 'POST',
+                    contentType: 'application/json',
+                    data: JSON.stringify({
+                        id: checkboxId,
+                        checked: isChecked
+                    }),
+                    success: function(response) {
+                        console.log(response);
+                    }
+                });
+            });
+        });
+
+    </script>
+</head>
+<body>
+
+
+    <section class="vh-100" style="background-color: #3da2c3;">
+        <div class="container py-5 h-100">
+            <div class="row d-flex justify-content-center align-items-center h-100">
+                <div class="col col-lg-8 col-xl-6">
+                    <div class="card rounded-3">
+                        <div class="card-body p-4">
+
+                            <p class="mb-2"><span class="h2 me-2">Todo List</span>
+
+                            <form class="row g-3" method="post" action="/add_task">
+                                <div class="col-sm-10">
+                                    <input class="form-control" type="text" name="text" id="text" placeholder="Write your next task here...">
+                                </div>
+                                <div class="col-sm-2">
+                                    <button type="submit" class="btn btn-danger">Add</button>
+                                </div>
+                            </form>
+                            <hr class="my-4">
+                            <ul class="list-group rounded-0">
+
+                                {% for todo in todo_list %}
+                                    <li class="list-group-item border-0 d-flex align-items-center ps-0">
+                                        {% if todo.finish == 0 %}
+                                            <input id="{{ todo.id }}" class="form-check-input me-3" type="checkbox" value="" aria-label="..." onclick="toggleStrikethrough(this)"/>
+                                            <span>{{ todo.text }}</span>
+                                        {% else %}
+                                            <input id="{{ todo.id }}" class="form-check-input me-3" type="checkbox" value="" aria-label="..." onclick="toggleStrikethrough(this)" checked />
+                                            <span class="strikethrough ">{{ todo.text }}</span>
+                                        {% endif %}
+                                        <a href="{{ url_for('delete_task', task_id=todo.id) }}" class="mx-2 text-danger">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-trash" viewBox="0 0 16 16">
+                                                <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6z"/>
+                                                <path fill-rule="evenodd" d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1v1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4H4.118zM2.5 3V2h11v1h-11z"/>
+                                            </svg>
+                                        </a>
+                                    </li>
+                                {% endfor %}
+
+                            </ul>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js" integrity="sha384-geWF76RCwLtnZ8qwWowPQNguL3RmwHVBC9FhGdlKrxdiJJigb/j/68SIy3Te4Bkz" crossorigin="anonymous"></script>
+<script>
+    function toggleStrikethrough(checkbox) {
+        const label = checkbox.nextElementSibling;
+        if (checkbox.checked) {
+            label.classList.add('strikethrough');
+        } else {
+            label.classList.remove('strikethrough');
+        }
+    }
+</script>
+
+</body>
+</html>
